@@ -1,115 +1,50 @@
 <template>
-  <div id="canvas">
-    <div id="deep-space" />
-    <div id="space-field">
-      <SpaceObject id="spaceship" class="spaceship" :data="spaceField.ship" resolution="2" />
+  <div>
+    <!-- Condicionalmente renderizar o botão de início -->
+    <div v-if="!gameStarted">
+      <button @click="startGame">INICIAR</button>
+    </div>
 
-      <SpaceObject class="asteroid" :data="asteroid" resolution="2"
-                  :key="asteroid.center"
-                  v-for="asteroid in spaceField.asteroids" />
-
-      <SpaceObject class="missile" :data="missile" resolution="2"
-                  :key="missile.center"
-                  v-for="missile in spaceField.missiles" />
-
-      <SpaceObject class="explosion" :data="explosion" resolution="2"
-                  :key="explosion.center"
-                  v-for="explosion in spaceField.explosions" />
+    <!-- O componente de jogo (start_game.vue) será carregado aqui -->
+    <div v-if="gameStarted">
+      <StartGame />
     </div>
   </div>
 </template>
 
 <script setup>
-const {
-  data: spaceField,
-  refresh: updateSpaceField
-} = await $get("/space-field");
+import { ref } from 'vue';
+import StartGame from './start_game.vue'; // Importe o componente start_game.vue
 
-onMounted(() => {
-  window.addEventListener("keydown", async (event) => {
-    const keyToCommand = {
-      "ArrowUp": "MOVE_SHIP_UP",
-      "ArrowDown": "MOVE_SHIP_DOWN",
-      "ArrowRight": "MOVE_SHIP_RIGHT",
-      "ArrowLeft": "MOVE_SHIP_LEFT",
-      "Space": "LAUNCH_MISSILE",
-      "Escape": "PAUSE_GAME",
-    };
+const gameStarted = ref(false);
 
-    const command = keyToCommand[event.code];
+// Função para iniciar o jogo
+async function startGame() {
+  if (!gameStarted.value) {
+    gameStarted.value = true;
+    await loadStartGame();
+  }
+}
 
-    // Ignore if invalid key was pressed
-    if (command === undefined) return;
-
-    console.log(`Triggering command: ${command}`);
-    await $post("/ship/commands", { command })
-  });
-
-  window.setInterval(updateSpaceField, 1000);
-})
+// Função para carregar o componente StartGame (start_game.vue)
+async function loadStartGame() {
+  // Importa o módulo dinamicamente e espera seu carregamento
+  const module = await import('./start_game.vue');
+  // Define o componente StartGame no objeto de configuração
+  // do Vue para renderizá-lo na tela
+  const { default: StartGameComponent } = module;
+  app.component('StartGame', StartGameComponent);
+}
 </script>
 
 <style>
-#canvas {
-  height: calc(100vh - 4rem);
-  width: calc(100vw - 4rem);
-
-  padding: 2rem;
-
-  background-color: #36bbf5;
-  overflow: hidden;
-
-  position: relative;
-
-  display: flex;
-  justify-content: center;
-  align-items: center;
-}
-
-@keyframes slide {
-  0% {
-    transform: translate(1px);
-  }
-  50% {
-    transform: translate(-1px);
-  }
-  100% {
-    transform: translate(1px);
-  }
-}
-
-#deep-space {
-  height: calc(100% - 4rem);
-  width: calc(100% - 4rem);
-
-  background-image: url("~/assets/space.png");
-  background-origin: content-box;
-  animation: slide 3s linear infinite;
-
-  position: absolute;
-  z-index: 0;
-}
-
-#space-field {
-  height: calc(100% - 4rem);
-  width: calc(100% - 4rem);
-
-  position: relative;
-}
-
-.spaceship {
-  background-image: url("~/assets/spaceship.png");
-}
-
-.asteroid {
-  background-image: url("~/assets/asteroid.png");
-}
-
-.missile {
-  background-image: url("~/assets/missile.png");
-}
-
-.explosion {
-  background-image: url("~/assets/explosion.png");
+/* Estilos opcionais para o menu */
+button {
+  padding: 10px 20px;
+  font-size: 18px;
+  background-color: #4CAF50;
+  color: white;
+  border: none;
+  cursor: pointer;
 }
 </style>
