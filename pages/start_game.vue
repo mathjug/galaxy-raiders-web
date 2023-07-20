@@ -51,15 +51,17 @@ onMounted(() => {
 
 <style>
 #canvas {
-  height: calc(100vh - 4rem);
-  width: calc(100vw - 4rem);
-
-  padding: 2rem;
-
   background-color: #36bbf5;
   overflow: hidden;
 
-  position: relative;
+  position: fixed;
+  top: 0;
+  left: 0;
+  height: calc(100vh - 4rem);
+  width: calc(100vw - 4rem);
+  margin: 0;
+  padding: 2rem;
+  user-select: none;
 
   display: flex;
   justify-content: center;

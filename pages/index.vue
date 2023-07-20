@@ -1,50 +1,105 @@
 <template>
-  <div>
-    <!-- Condicionalmente renderizar o botão de início -->
-    <div v-if="!gameStarted">
-      <button @click="startGame">INICIAR</button>
-    </div>
-
-    <!-- O componente de jogo (start_game.vue) será carregado aqui -->
-    <div v-if="gameStarted">
-      <StartGame />
-    </div>
+  <div class="menu-background">
+      <div class="content">
+          <h1>Galaxy Raiders</h1>
+          <div class="button-container">
+              <button><router-link class="custom-link-button" to="/start_game">Iniciar partida</router-link></button>
+              <button><router-link class="custom-link-button" to="/show_leaderboard">Visualizar placar</router-link></button>
+              <button @click="exit">Exit</button>
+          </div>
+      </div>
   </div>
 </template>
 
-<script setup>
-import { ref } from 'vue';
-import StartGame from './start_game.vue'; // Importe o componente start_game.vue
-
-const gameStarted = ref(false);
-
-// Função para iniciar o jogo
-async function startGame() {
-  if (!gameStarted.value) {
-    gameStarted.value = true;
-    await loadStartGame();
-  }
-}
-
-// Função para carregar o componente StartGame (start_game.vue)
-async function loadStartGame() {
-  // Importa o módulo dinamicamente e espera seu carregamento
-  const module = await import('./start_game.vue');
-  // Define o componente StartGame no objeto de configuração
-  // do Vue para renderizá-lo na tela
-  const { default: StartGameComponent } = module;
-  app.component('StartGame', StartGameComponent);
-}
+<script>
+  export default {
+      methods: {
+          exit() {
+              window.location.href =
+              'https://jornal.usp.br/institucional/pela-primeira-vez-uma-universidade-brasileira-esta-entre-as-100-melhores-em-ranking/';
+          },
+      },
+  };
 </script>
 
 <style>
-/* Estilos opcionais para o menu */
-button {
-  padding: 10px 20px;
-  font-size: 18px;
-  background-color: #4CAF50;
-  color: white;
-  border: none;
-  cursor: pointer;
-}
+  .menu-background {
+      position: fixed;
+      top: 0;
+      left: 0;
+      z-index: -1;
+      width: 100%;
+      height: 100%;
+      background-image: url('../assets/universe.gif');
+      background-repeat: no-repeat;
+      background-size: cover;
+  }
+
+  .custom-link-button {
+    outline: none;
+    text-decoration: none;
+    color: rgb(255, 255, 255);
+  }
+
+  .custom-link-button:focus {
+    border: 2px solid blue;
+  }
+
+  
+  .custom-link-button:focus:not(:focus-visible) {
+    border: none;
+  }
+
+  .content {
+      height: 100%;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      color: yellow;
+      font-size: 20px;
+      font-family: "Copperplate", sans-serif;
+  }
+
+  h1 {
+      font-size: 60px;
+      font-weight: bold;
+      text-shadow: 2px 2px 4px rgba(50, 42, 42, 0.5);
+      animation: fade-in 1s ease-in-out;
+  }
+
+  @keyframes fade-in {
+      from {
+          opacity: 0;
+      }
+      to {
+          opacity: 1;
+      }
+  }
+
+  .button-container {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      text-align: center;
+      animation: fade-in 1s ease-in-out;
+  }
+
+  .button-container button {
+      min-width: 250px;
+      min-height: 50px;
+      border-radius: 10%;
+      font-weight: bold;
+      color: whitesmoke;
+      background: none;
+      border: solid 3px;
+      font: inherit;
+      padding: 0.75em 2em;
+      margin-bottom: 20px;
+  }
+
+  .button-container button:hover {
+      background-color: rgb(137, 137, 25);
+  }
+
 </style>
