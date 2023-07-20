@@ -5,7 +5,7 @@
           <div class="button-container">
               <button><router-link class="custom-link-button" to="/start_game">Iniciar partida</router-link></button>
               <button><router-link class="custom-link-button" to="/show_leaderboard">Visualizar placar</router-link></button>
-              <button @click="exit">Exit</button>
+              <button @click="exit">Sair</button>
           </div>
       </div>
   </div>
